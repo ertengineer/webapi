@@ -1,0 +1,31 @@
+version: "2"
+services:
+    web:
+        build: .
+        ports:
+            - "80:5000"
+        logging:
+            driver: awslogs
+            options:
+              awslogs-group: ecsDemoLogs
+              awslogs-region: ap-southeast-2
+              awslogs-stream-prefix: studentapi
+        image: 599080142044.dkr.ecr.ap-southeast-2.amazonaws.com/studentapi/web
+        links:
+            - db
+        cpu_shares: 300
+        mem_limit: 512m
+        environment:
+            DatabaseServer: "db"
+            DatabaseName: "StudentsDb"
+            DatabaseUser: "sa"
+            DatabaseUserPassword: "Password1!"
+    db:
+        image: "microsoft/mssql-server-linux"
+        cpu_shares: 300
+        mem_limit: 1024m
+        ports:
+            - "1433:1433"
+        environment:
+            SA_PASSWORD: "Password1!"
+            ACCEPT_EULA: "Y"
